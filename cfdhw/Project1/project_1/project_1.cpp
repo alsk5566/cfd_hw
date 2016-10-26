@@ -15,7 +15,7 @@ void initial_1darray(double *, int);
 void initial_2darray(double **, int);
 void fillupperbc(double**, int);
 void fillchannelarray(double**, int,int,int);
-void fillunderbc(double**, int, int, int);
+void fillunderbc(double**, int, int, int, int);
 void out2darray(char*, double**, int);
 void out1darray(char*, double*, int);
 
@@ -28,6 +28,7 @@ int main()
 	int length = l+xinf;
 	int height = 1;
 	double delx = 0.2;
+	double d = 0.4;
 	int row = (length / delx)+1;				
 	int column = (height / delx)+1;
 	int mesh_amount = row*column;
@@ -63,6 +64,10 @@ int main()
 		fillchannelarray(an, rlength,i, i-row);
 	}
 	
+	int sdl = 1+((1-d) / delx)*row;
+	int sl = (l / delx) + 1;
+
+	fillunderbc(an, rlength, sdl, sdl,sl);
 	
 
 
@@ -196,8 +201,23 @@ void fillchannelarray(double**arr, int n, int row, int co)
 		}
 	}
 }
-void fillunderbc(double**arr, int n, int row, int co) 
+void fillunderbc(double**arr, int n, int row, int co,int sl) 
 {
+	for (int i = row; i < row + n; i++) 
+	{
+		for (int j = co; j < co+sl; j++) 
+		{
+			*(*(arr + i) + j) = 0;
+		}
+	}
 
+	for (int i = row; i < row + n; i++)
+	{
+		for (int j = co; j < co + sl; j++)
+		{
+			if (i==j)
+				*(*(arr + i) + j) = 1;
+		}
+	}
 }
 
