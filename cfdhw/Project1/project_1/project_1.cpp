@@ -14,9 +14,11 @@ void show_2darray(double **, int);
 void initial_1darray(double *, int);
 void initial_2darray(double **, int);
 void fillupperbc(double**, int);
+void fillchannelarray(double**, int,int,int);
+void fillunderbc(double**, int, int, int, int);
 void out2darray(char*, double**, int);
 void out1darray(char*, double*, int);
-void fillchannelarray(double**, int,int,int);
+
 
 
 int main()
@@ -26,7 +28,8 @@ int main()
 	int length = l+xinf;
 	int height = 1;
 	double delx = 0.2;
-	int row = (length / delx)+1;
+	double d = 0.4;
+	int row = (length / delx)+1;				
 	int column = (height / delx)+1;
 	int mesh_amount = row*column;
 
@@ -55,6 +58,16 @@ int main()
 	initial_2darray(an, mesh_amount);
 
 	fillupperbc(an, row);
+	int rlength = row;
+	for (int i = row; i < mesh_amount; i += (row)) 
+	{
+		fillchannelarray(an, rlength,i, i-row);
+	}
+	
+	int sdl = 1+((1-d) / delx)*row;
+	int sl = (l / delx) + 1;
+
+	fillunderbc(an, rlength, sdl, sdl,sl);
 	
 
 
@@ -106,9 +119,9 @@ void initial_2darray(double **arr, int am)
 }
 void fillupperbc(double **arr, int number) 
 {
-	for (int i = 0; i < number-1;i++) 
+	for (int i = 0; i < number;i++) 
 	{
-		for (int j = 0; j < number-1; j++) 
+		for (int j = 0; j < number; j++) 
 		{
 			if (i == j)
 				*(*(arr + i) + j) = 1;
@@ -123,13 +136,13 @@ void out2darray(char*a1, double**arr, int number)
 	amatrix << setw(4)<<" ";
 	for (int i = 0; i < number; i++) 
 	{
-		amatrix <<setw(3)<<i + 1 << " ";
+		amatrix <<setw(3)<<i  << " ";
 	}
 	amatrix << endl;
 
 	for (int i = 0; i < number; i++)
 	{
-		amatrix <<setw(3) <<i + 1 << " ";
+		amatrix <<setw(3) <<i  << " ";
 		for (int j = 0; j < number; j++)
 		{
 
@@ -145,10 +158,66 @@ void out1darray(char*a2, double*arr, int number)
 
 }
 
-void fillchannelarray(double**arr, int number) 
+void fillchannelarray(double**arr, int n, int row, int co) 
 {
+	for (int i=row;i<row+n-1;i++)
+	{
+		for (int j = co; j < co+(3*n)-2;j++) 
+		{
+			if (j < (co + n)&&j>co) 
+			{
+				if (i%n == j%n) 
+				{
+					*(*(arr + i) + j) = 1;
+				}
+			}
+			if (j > (co + n) && j < (co + (2 * n)-1)) 
+			{
+				if (i%n == 0) 
+				{
+					*(*(arr + i) + co+n) = 1;
+				}
+				
+				if (i%n == (j - n)%n) 
+				{
+					*(*(arr + i) + j) = -4;
+					*(*(arr + i) + j+1) = 1;
+					*(*(arr + i) + j-1) = 1;
+				}
+			}
+			if (j == co + 2 * n - 1) 
+			{
+				*(*(arr + j) + j) = 1;
+				
+			}
 
-
+			if (j > (co + (2*n)-1))
+			{
+				if (i%n == (j-(2*n)+1)%n)
+				{
+					*(*(arr + i) + j) = 1;
+				}
+			}
+		}
+	}
 }
+void fillunderbc(double**arr, int n, int row, int co,int sl) 
+{
+	for (int i = row; i < row + n; i++) 
+	{
+		for (int j = co; j < co+sl; j++) 
+		{
+			*(*(arr + i) + j) = 0;
+		}
+	}
 
+	for (int i = row; i < row + n; i++)
+	{
+		for (int j = co; j < co + sl; j++)
+		{
+			if (i==j)
+				*(*(arr + i) + j) = 1;
+		}
+	}
+}
 
