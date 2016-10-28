@@ -15,7 +15,7 @@ void pointcount(double**, int,int);
 void pointreplace(double**, double**, double**, double);
 
 int l = 2;
-int xinf = 2* l;
+int xinf = 3* l;
 int length = l + xinf;
 int height = 1;
 double delx = 0.05;
@@ -39,8 +39,12 @@ int main()
 		*(sfunc + i) = new double[row];
 	}
 	initialarray(strfunc, row, column);	
+	initialarray(ffunc, row, column);
+	initialarray(sfunc, row, column);
 	fillbc(strfunc, row,column);
-	pointcount(strfunc, row, column);
+	fillbc(ffunc, row, column);
+	fillbc(sfunc, row, column);
+	
 	
 	double error = 1.0;
 	
@@ -49,7 +53,7 @@ int main()
 
 	
 	
-	outputarray(sf, strfunc);
+	outputarray(sf, sfunc);
 
     return 0;
 }
@@ -115,24 +119,24 @@ void pointreplace(double**aro, double**arf, double**ars, double er)
 	do
 	{
 		er = 0.0;
-		for (int i = 1; i < column; i++)
+		for (int i = 0; i <= column; i++)
 		{
-			for (int j = 1; j < row; j++)
+			for (int j = 0; j <= row; j++)
 			{
 				*(*(arf + i) + j) = *(*(aro + i) + j);
 			}
 		}
 		pointcount(aro, row, column);
-		for (int i = 1; i < column; i++)
+		for (int i = 0; i <= column; i++)
 		{
-			for (int j = 1; j < row; j++)
+			for (int j = 0; j <= row; j++)
 			{
 				*(*(ars + i) + j) = *(*(aro + i) + j);
 			}
 		}
-		for (int i = 1; i < column; i++)
+		for (int i = 0; i <= column; i++)
 		{
-			for (int j = 1; j < row; j++)
+			for (int j = 0; j <= row; j++)
 			{
 				er+= *(*(ars + i) + j) - *(*(arf + i) + j);
 			}
@@ -152,15 +156,27 @@ void outputarray(char*fname, double**arr)
 	sfmatrix.open(fname, ios::out);
 	sfmatrix << "variables=x,y,psi" << endl;
 	sfmatrix << "zone "<<"i="<<row+1<<"	,"<<"j= "<< column+1 <<" ,"<<"f=point"<<endl;	
-
+	
 	for (int i = 0; i <= column; i++) 
 	{
 		for (int j = 0; j <= row; j++) 
 		{
-			sfmatrix << (j)/(double)(column) << " " <<(column-i)/double(column) << " " << *(*(arr + i) + j) << endl;
+			sfmatrix << (j)/(double)(column) << " " <<(column-i)/double(column) << " " << fixed<<setprecision(6)<<*(*(arr + i) + j) << endl;
 			
 		}
 	}
 	
+	/*
+	for (int i = 0; i <= column; i++)
+	{
+		for (int j = 0; j <= row; j++)
+		{
+			sfmatrix <<fixed<<setprecision(5)<<*(*(arr + i) + j) << " ";
+			if (j == row)
+				sfmatrix << endl;
+
+		}
+	}
+	*/
 
 }
